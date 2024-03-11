@@ -1,9 +1,5 @@
 import gameVariable from "../constants/constants.js";
-import { createHealthBar, createZombie } from "./createGameElements.js";
-import { zombieWalk } from "./move.js";
-const { ninja } = gameVariable;
-const shurikenOverlay = document.querySelector(".shuriken-overlay");
-shurikenOverlay.style.height = "0%";
+const { ninja, gameWinText, zombieKillTarget } = gameVariable;
 
 const jumpAnimation = (image) => {
   for (let a = 0; a < 10; a++) {
@@ -60,8 +56,9 @@ const shurikenSpin = (shuriken) => {
   let deg = 0;
   const shurikenSpinInterval = setInterval(() => {
     shuriken.style.transform = `rotate(${deg}deg)`;
-    deg += 5;
+    deg += 3;
     shuriken.style.right = parseInt(shuriken.style.right) - 4 + "px";
+
     if (
       parseInt(shuriken.style.right) >=
         parseInt(gameVariable.zombie.style.right) &&
@@ -73,41 +70,88 @@ const shurikenSpin = (shuriken) => {
       clearInterval(shurikenSpinInterval);
       document.querySelector(".game-wrapper").removeChild(shuriken);
       gameVariable.currentZombieHealth -= gameVariable.hitDamage;
-      document.querySelector(".health-bar").style.width =
-        parseInt(document.querySelector(".health-bar").style.width) -
-        gameVariable.hitDamage +
-        "%";
+      if (document.querySelector(".health-bar")) {
+        document.querySelector(".health-bar").style.width =
+          parseInt(document.querySelector(".health-bar").style.width) -
+          gameVariable.hitDamage +
+          "%";
+      }
     }
     if (parseInt(shuriken.style.right) === -100) {
       clearInterval(shurikenSpinInterval);
-      document.querySelector(".game-wrapper").removeChild(shuriken);
     }
   }, 0.5);
 };
 
 const shurikenLoadingAnimation = () => {
-  const loadingAnimation = setInterval(() => {
-    shurikenOverlay.style.height =
-      parseFloat(shurikenOverlay.style.height) + 0.5 + "%";
-    if (parseFloat(shurikenOverlay.style.height) === 100) {
-      gameVariable.shurikenCount++;
-      document.querySelector(".shuriken-counter").innerHTML =
-        gameVariable.shurikenCount;
-      clearInterval(loadingAnimation);
+  if (document.querySelector(".shuriken-counter")) {
+    document.querySelector(".shuriken-counter").innerHTML =
+      gameVariable.shurikenCount;
+  }
+  if (
+    gameVariable.hearts !== 0 &&
+    gameVariable.gameOn &&
+    gameVariable.zombieCount !== zombieKillTarget
+  ) {
+    const shurikenOverlay = document.querySelector(".shuriken-overlay");
+    shurikenOverlay.style.height = "0%";
+    for (let i = 0; i < 200; i++) {
       setTimeout(() => {
-        shurikenOverlay.style.height = "0%";
-        if (gameVariable.shurikenCount < 10) {
-          shurikenLoadingAnimation();
-        }
-      }, 700);
+        shurikenOverlay.style.height =
+          parseFloat(shurikenOverlay.style.height) + 0.5 + "%";
+      }, i * 8);
     }
-  }, 5);
+    setTimeout(() => {
+      if (gameVariable.hearts !== 0) {
+        gameVariable.shurikenCount++;
+        if (document.querySelector(".shuriken-counter")) {
+          document.querySelector(".shuriken-counter").innerHTML =
+            gameVariable.shurikenCount;
+        }
+        setTimeout(() => {
+          shurikenOverlay.style.height = "0%";
+          if (gameVariable.shurikenCount < 5) {
+            shurikenLoadingAnimation();
+          }
+        }, 500);
+      }
+    }, 1700);
+  }
 };
 
+const winAnimation = () => {
+  const castle = document.querySelector(".win-castle");
+  castle.style.right = "-750px";
+  for (let i = 0; i < 400; i++) {
+    setTimeout(() => {
+      castle.style.right = parseInt(castle.style.right) + 1 + "px";
+    }, i * 4);
+  }
+  gameVariable.gameOn = false;
+  setTimeout(() => {
+    gameVariable.groundMoveCondition = false;
+    ninja.style.visibility = "hidden";
+    const standingNinja = document.createElement("img");
+    standingNinja.src = "./images/ninja-win.png";
+    standingNinja.classList.add("ninja");
+    standingNinja.classList.add("standing-ninja");
+    standingNinja.style.width = "150px";
+    standingNinja.style.bottom = "120px";
+    document.querySelector(".game-wrapper").appendChild(standingNinja);
+    const speechBubble = document.querySelector(".bubble");
+    speechBubble.style.display = "block";
+    gameWinText.split(``).forEach((letter, index) => {
+      setTimeout(() => {
+        speechBubble.innerHTML += letter;
+      }, 100 * index);
+    });
+  }, 1596);
+};
 export {
   runAnimation,
   shurikenSpin,
   ninjaJump,
   jumpAnimation,
   shurikenLoadingAnimation,
+  winAnimation,
 };

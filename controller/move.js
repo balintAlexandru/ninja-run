@@ -5,30 +5,31 @@ import {
   createHealthBar,
   createZombie,
 } from "./createGameElements.js";
-const { ground, ninja } = gameVariable;
+const { ninja, gameOverScreen, zombieKillTarget } = gameVariable;
 
-const groundMove = (steps, ground) => {
-  for (let i = 0; i < steps; i++) {
-    setTimeout(() => {
+const groundMove = (ground) => {
+  setInterval(() => {
+    if (gameVariable.groundMoveCondition) {
       ground.style.left = parseInt(ground.style.left) - 1 + "px";
       if (parseInt(ground.style.left) === -900) {
-        document.querySelector(".game-wrapper").removeChild(ground);
-        const image = createGround({ ground: "ground2", position: "900px" });
-        groundMove(1800, image);
+        ground.style.left = "900px";
       }
-    }, i * 4);
-  }
+    }
+  }, 4);
 };
 
-ground.forEach((element) => {
-  const image = createGround(element);
-  groundMove(element.loopPosition, image);
+new Array(2).fill("").forEach((_, index) => {
+  const image = createGround(`ground${index + 1}`, 900 * index);
+  groundMove(image);
 });
 
 const zombieWalk = (zombie) => {
   const walk = setInterval(() => {
     zombie.style.right = parseInt(zombie.style.right) + 3 + "px";
-
+    if (gameVariable.zombieCount === zombieKillTarget) {
+      clearInterval(walk);
+      return;
+    }
     if (
       parseInt(zombie.style.right) > 570 &&
       parseInt(zombie.style.right) < 670 &&
@@ -48,11 +49,34 @@ const zombieWalk = (zombie) => {
           }, 200);
         }, i * 300);
       }
+      if (gameVariable.hearts === 0) {
+        const healthBar = document.querySelector(".health-bar-wrapper");
+        const shurikenIcon = document.querySelector(".shuriken-count-wrapper");
+        const zombieIcon = document.querySelector(".zombie-count-wrapper");
+        ninja.style.visibility = "hidden";
+        document.querySelector(".game-wrapper").removeChild(zombie);
+        document.querySelector(".game-wrapper").removeChild(healthBar);
+        document.querySelector(".game-wrapper").removeChild(shurikenIcon);
+        document.querySelector(".game-wrapper").removeChild(zombieIcon);
+        clearInterval(walk);
+        setTimeout(() => {
+          gameOverScreen.style.display = "inherit";
+          setTimeout(() => {
+            gameOverScreen.querySelector(
+              ".play-again-button"
+            ).style.visibility = "visible";
+          }, 500);
+        }, 10);
+        return;
+      }
     }
 
     if (gameVariable.currentZombieHealth <= 0) {
       clearInterval(walk);
+      gameVariable.zombieCount++;
       gameVariable.currentZombieHealth = 100;
+      document.querySelector(".zombie-counter").innerHTML =
+        gameVariable.zombieCount;
       const healthBar = document.querySelector(".health-bar-wrapper");
       const image = createZombie();
 
@@ -66,7 +90,7 @@ const zombieWalk = (zombie) => {
       gameVariable.zombie = image;
 
       setTimeout(() => {
-        zombieWalk(image);
+        gameVariable.zombieCount !== zombieKillTarget && zombieWalk(image);
       }, 500);
     }
 

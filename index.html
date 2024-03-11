@@ -1,23 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ninja run</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="app.js"  type="module" defer></script>
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+    <script src="app.js" type="module" defer></script>
+  </head>
+  <body>
     <div class="game-wrapper">
-        <div class="hearts-wrapper"></div>
-        <img src="./images/zombie/walk/Walk1.png" alt="zombie" class="zombie"/>
-        <img src="./images/ninja/run/Run__000.png" alt="ninja" class="ninja">
-        <img src="./images/cloud.png" alt="cloud" class="cloud">
-        <div class="shuriken-count-wrapper">
-            <img src="./images/shuriken.png" alt="shuriken">
-            <div class="shuriken-overlay"></div>
-            <span class="shuriken-counter">0</span>
+      <div class="hearts-wrapper"></div>
+      <img src="./images/zombie/walk/Walk1.png" alt="zombie" class="zombie" />
+      <img src="./images/ninja/run/Run__000.png" alt="ninja" class="ninja" />
+      <img src="./images/cloud.png" alt="cloud" class="cloud" />
+      <button class="play-again-button play-again-button-win">
+        Play again?
+      </button>
+      <div class="game-over-screen">
+        <img class="blood" src="./images/Game Over/Blood.png" alt="blood" />
+        <img
+          class="zombie-game-over"
+          src="./images/Game Over/Zombie.gif"
+          alt="zombie"
+        />
+        <div class="game-over-message">
+          <h1>GAME OVER</h1>
+          <button class="play-again-button">Play again?</button>
         </div>
+      </div>
+      <div class="bubble">
+        <div class="txt"></div>
+        <div class="bubble-arrow"></div>
+      </div>
+      <div class="intro-wrapper">
+        <h1>NINJA RUN</h1>
+        <p>
+          Help the ninja get back home. Along the way, he'll encounter several
+          monsters that he'll need to defeat.
+        </p>
+        <ul>
+          <p>Commands</p>
+          <li>SPACE = Jump</li>
+          <li>E = Launch shurikens</li>
+        </ul>
+        <button class="start-game">START GAME</button>
+        <img
+          src="./images/ninja/run/Run__000.png"
+          alt="ninja"
+          class="intro-ninja"
+        />
+      </div>
     </div>
-</body>
+  </body>
 </html>

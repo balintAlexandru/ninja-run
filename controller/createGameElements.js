@@ -11,11 +11,11 @@ const createHearts = () => {
   });
 };
 
-const createGround = (element) => {
+const createGround = (element, position) => {
   const image = document.createElement("img");
   image.src = "./images/ground.png";
-  image.classList.add(element.ground);
-  image.style.left = element.position;
+  image.classList.add(element);
+  image.style.left = position + "px";
   document.querySelector(".game-wrapper").appendChild(image);
   return image;
 };
@@ -46,12 +46,39 @@ const createHealthBar = (zombie) => {
   document.querySelector(".game-wrapper").appendChild(healthBarWrapper);
 };
 
+const createCounterIcons = () => {
+  new Array(2).fill("").forEach((_, index) => {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add(`${index ? "zombie" : "shuriken"}-count-wrapper`);
+    const image = document.createElement("img");
+    image.src = `./images/${index ? "zombie-icon.png" : "shuriken.png"}`;
+    if (!index) {
+      const overlay = document.createElement("div");
+      overlay.classList.add("shuriken-overlay");
+      wrapper.appendChild(overlay);
+    }
+    const counter = document.createElement("span");
+    counter.classList.add(`${index ? "zombie" : "shuriken"}-counter`);
+    counter.innerHTML = 0;
+    wrapper.appendChild(image);
+    wrapper.appendChild(counter);
+    document.querySelector(".game-wrapper").appendChild(wrapper);
+  });
+};
+
 const createZombie = () => {
   const image = document.createElement("img");
   image.src = "./images/zombie/walk/Walk1.png";
   image.classList.add("zombie");
   image.style.right = "-150px";
   return image;
+};
+const createCastleWin = () => {
+  const castle = document.createElement("img");
+  castle.src = "./images/Castle.png";
+  castle.style.right = "-750px";
+  castle.classList.add("win-castle");
+  document.querySelector(".game-wrapper").appendChild(castle);
 };
 
 export {
@@ -60,4 +87,6 @@ export {
   createShuriken,
   createHealthBar,
   createZombie,
+  createCounterIcons,
+  createCastleWin,
 };
